@@ -17,8 +17,8 @@ import { ConfigModule, ConfigService} from '@nestjs/config'
         password: config.get('DB_PASS'),
         database: config.get('DB_NAME'),
         autoLoadEntities: true,
-        synchronize: false,
-        migrations: [__dirname + '/migrations/*{.ts,.js'],
+        synchronize: true,
+        migrations: [__dirname + '/migrations/*{.ts,.js}'],
         migrationsRun: true,
         extra: {
           max: Number(config.get('DB_POOL_MAX') ?? 10),

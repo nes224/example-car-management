@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Res,
+  HttpStatus,
 } from '@nestjs/common';
 import { CarsService } from './cars.service';
 import { CreateCarDto } from './dto/create-car.dto';
@@ -30,52 +31,73 @@ export class CarsController {
   async create(
     @Body() createCarDto: CreateCarDto,
     @Res() res: Response,
-  ): Promise<responseDto> {
+  ): Promise<Response> {
+    let response: responseDto;
     const create: Car = await this.carsService.create(createCarDto);
-    return createRsp('Create car is successfully', create);
+    response = createRsp('Create car is success', create);
+    return res.status(HttpStatus.CREATED).send(response);
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<responseDto> {
+  async findOne(
+    @Param('id') id: string,
+    @Res() res: Response,
+  ): Promise<Response> {
+    let response: responseDto;
+
     if (id === '') {
-      return badRequest('id is empty', null);
+      response = badRequest('Id is empty', null);
+      return res.status(HttpStatus.BAD_REQUEST).send(response);
     }
 
     const car: Car = await this.carsService.findOne(id);
-    if (car !== null) {
-      return notFound('Not found car with this id', null);
+    if (car === null) {
+      response = notFound(`Not found car with this id:`, null);
+      return res.status(HttpStatus.NOT_FOUND).send(response);
     }
-    return successRsp('Find car by id is success', car);
+    response = successRsp('Find car by id is success', car);
+    return res.status(HttpStatus.OK).send(response);
   }
 
   @Patch(':id')
   async update(
     @Param('id') id: string,
     @Body() updateCarDto: UpdateCarDto,
-  ): Promise<responseDto> {
+    @Res() res: Response,
+  ): Promise<Response> {
+    let response: responseDto;
+
     if (id === '') {
-      return badRequest('id is empty', null);
+      response = badRequest('Id is empty', null);
+      return res.status(HttpStatus.BAD_REQUEST).send(response);
     }
 
     try {
       const update: Car = await this.carsService.update(id, updateCarDto);
-      return successRsp('Update car is success', update);
+      response = successRsp('Update car is success', update);
+      return res.status(HttpStatus.OK).send(response);
     } catch (error) {
-      return internalServerError(
+      response = internalServerError(
         error instanceof Error ? error.message : 'Unknown error',
         null,
       );
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(response);
     }
   }
 
   @Delete(':id')
-  async deleteById(@Param('id') id: string): Promise<any> {
+  async deleteById(
+    @Param('id') id: string,
+    @Res() res: Response,
+  ): Promise<Response> {
+    let response: responseDto;
     if (id === '') {
-      return badRequest('id is empty', null);
+      response = badRequest('Id is empty', null);
+      return res.status(HttpStatus.BAD_REQUEST).send(response);
     }
 
     await this.carsService.deleteById(id);
-
-    return successRsp('Delete car is success', null);
+    response = successRsp('Delete car is success', null);
+    return res.status(HttpStatus.OK).send(response);
   }
 }
