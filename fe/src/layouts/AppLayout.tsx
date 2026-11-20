@@ -10,7 +10,7 @@ export default function AppLayout() {
                 </nav>
             </aside>
             <header className="flex items-center border-b border-gray-200 px-6 font-semibold">
-                Header
+                ข้อมูลรถยนต์
             </header>
             <main className="min-h-0 overflow-y-auto p-6">
                 <div className="max-w-1400px">

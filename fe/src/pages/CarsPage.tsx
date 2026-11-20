@@ -1,5 +1,8 @@
+import { useState } from "react"
 import DataTable, { type Column } from "../components/DataTable"
+import Modal from "../components/Modal"
 import type { Car } from "../types/car"
+import CarForm from "../components/CarForm"
 
 const cars: Car[] = [
     {
@@ -26,5 +29,21 @@ const columns: Column<Car>[] = [
 ]
 
 export default function CarsPage() {
-    return <DataTable columns={columns} rows={cars} rowKey={(car) => car.id} />
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+        <div className="space-y-4">
+            <div className="flex">
+                <button
+                    onClick={() => setIsOpen(true)}
+                    className="rounded-lg bg-sky-600 px-4 py-2 text-white hover:bg-sky-700">
+                    + เพิ่มรถ
+                </button>
+            </div>
+            <DataTable columns={columns} rows={cars} rowKey={(car) => car.id} />
+            <Modal open={isOpen} title="เพิ่มรถ" onClose={() => setIsOpen(false)}>
+                <CarForm onSubmit={(input) => console.log(input)} />
+            </Modal>
+        </div>
+    )
 }
