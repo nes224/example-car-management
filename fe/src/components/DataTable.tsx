@@ -14,12 +14,12 @@ type Props<T> = {
 
 export default function DataTable<T>({ columns, rows, rowKey }: Props<T>) {
     return (
-        <div>
-            <table>
-                <thead>
+        <div className="overflow-x-auto rounded-xl border border-gray-200">
+            <table className="w-full text-center text-medium">
+                <thead className="bg-gray-50 text-gray-600">
                     <tr>
                         {columns.map((col) => (
-                            <th>
+                            <th key={col.header} className="px-4 py-3 font-medium">
                                 {col.header}
                             </th>
                         ))}
@@ -27,10 +27,10 @@ export default function DataTable<T>({ columns, rows, rowKey }: Props<T>) {
                 </thead>
                 <tbody>
                     {rows.map((row) => (
-                        <tr key={rowKey(row)}>
+                        <tr key={rowKey(row)} className="border-t border-gray-100 hover:bg-gray-50">
                             {columns.map((col) => (
-                                <td key={col.header}>
-
+                                <td key={col.header} className="px-4 py-3">
+                                    {col.render(row)}
                                 </td>
                             ))}
                         </tr>
