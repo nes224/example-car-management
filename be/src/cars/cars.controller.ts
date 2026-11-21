@@ -22,8 +22,6 @@ import {
   badRequest,
   internalServerError,
 } from '../helpers/response/response.util';
-import { QueryFilter } from 'src/helpers/queryfilter/queryfilter.dto';
-import { KeywordQueryFilter } from 'src/helpers/queryfilter/keywordqueryfilter.dto';
 import { SearchCarDto } from './dto/search-car.dto';
 
 @Controller('cars')

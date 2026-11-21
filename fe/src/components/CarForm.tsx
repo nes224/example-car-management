@@ -14,13 +14,16 @@ const createCarForm: CarFormState = {
 }
 
 type Props = {
+    initial?: CarCreate
     onSubmit: (input: CarCreate) => void
 }
 
 const inputClass = "w-full rounded-lg border border-gray-200 px-3 py-1"
 
-export default function CarForm({ onSubmit }: Props) {
-    const [form, setForm] = useState<CarFormState>(createCarForm)
+export default function CarForm({ initial, onSubmit }: Props) {
+    const [form, setForm] = useState<CarFormState>(
+        initial ? { ...initial, year: String(initial.year)} : createCarForm
+    )
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         onSubmit({ ...form, year: Number(form.year) })

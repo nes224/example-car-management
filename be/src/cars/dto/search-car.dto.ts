@@ -3,9 +3,6 @@ import {
   IsOptional,
   IsString,
   ValidateNested,
-  IsIn,
-  Min,
-  Max,
 } from 'class-validator';
 import { KeywordQueryFilter } from '../../helpers/queryfilter/keywordqueryfilter.dto';
 import { Type } from 'class-transformer';

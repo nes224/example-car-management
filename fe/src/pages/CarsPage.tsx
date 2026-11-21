@@ -1,28 +1,15 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import DataTable, { type Column } from "../components/DataTable"
 import Modal from "../components/Modal"
-import type { Car } from "../types/car"
+import type { Car, CarCreate } from "../types/car"
 import CarForm from "../components/CarForm"
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { carsApi } from "../api/cars"
 import { useDebounce } from "../hook/useDebounce"
 
 let PAGE_SIZE: number = 20;
-type Filters = {
-    keyword: string
-    province: string
-    brand: string
-    orderBy: "asc" | "desc"
-}
-const emptyFilters: Filters = {
-    keyword: "",
-    province: "",
-    brand: "",
-    orderBy: "desc",
-}
 
-
-const columns: Column<Car>[] = [
+const dataColumns: Column<Car>[] = [
     { header: 'ทะเบียน', render: (car) => car.licensePlate },
     { header: 'จังหวัด', render: (car) => car.province },
     { header: 'ยี่ห้อ / รุ่น', render: (car) => `${car.brand} / ${car.model}` },
@@ -37,6 +24,8 @@ export default function CarsPage() {
     const [offset, setOffset] = useState(0);
     const [orderBy, setOrderBy] = useState<"asc" | "desc">("desc")
     const [keyword, setKeyword] = useState("")
+    const [carId, setcarId] = useState<string | null>(null)
+    const [isUpdating, setIsUpdating] = useState(false)
 
     const debouncedKeyword = useDebounce(keyword.trim(), 400)
 
@@ -65,6 +54,58 @@ export default function CarsPage() {
             setIsOpen(false)
         },
     });
+
+    const getCar = useQuery({
+        queryKey: ["car", carId],
+        queryFn: () => carsApi.getById(carId!),
+        enabled: carId !== null,
+    });
+
+    const updateCar = useMutation({
+        mutationFn: (input: CarCreate) => carsApi.update(carId!, input),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["cars"] });
+            queryClient.invalidateQueries({ queryKey: ["car", carId] });
+            setIsUpdating(false);
+        },
+    });
+
+    const deleteCar = useMutation({
+        mutationFn: (id: string) => carsApi.deleteById(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["cars"] })
+            closeDetail()
+        },
+    })
+
+    const viewingCar = getCar.data?.data
+
+    const columns: Column<Car>[] = [...dataColumns, {
+        header: "",
+        render: (car) => (
+            <button
+                type="button"
+                onClick={() => setcarId(car.id)}
+                className="text-sky-600 hover:underline"
+
+            >
+                ดู
+            </button>
+        ),
+    }];
+
+    const handleDelete = () => {
+        if (!viewingCar) return
+        if (!window.confirm(`ยืนยันการลบข้อมูล ${viewingCar.licensePlate}`)) return
+        deleteCar.mutate(viewingCar.id)
+    }
+
+    const closeDetail = () => {
+        setcarId(null)
+        setIsUpdating(false)
+        updateCar.reset()
+        deleteCar.reset()
+    }
 
     return (
         <div className="space-y-4">
@@ -134,8 +175,77 @@ export default function CarsPage() {
             </div>
 
             <Modal open={isOpen} title="เพิ่มรถ" onClose={() => setIsOpen(false)}>
+                {createCar.error && (
+                    <div className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+                        {createCar.error.message}
+                    </div>
+                )}
                 <CarForm onSubmit={(input) => createCar.mutate(input)} />
+            </Modal>
+
+            <Modal open={carId !== null} title={isUpdating ? "แก้ไขรถ" : "รายละเอียดรถ"} onClose={closeDetail}>
+                {getCar.isLoading && <p className="p-8 text-center text-gray-500">Is loading...</p>}
+                {(getCar.error || updateCar.error || deleteCar.error) && (
+                    <div className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+                        {(getCar.error ?? updateCar.error ?? deleteCar.error)?.message}
+                    </div>
+                )}
+
+                {viewingCar && isUpdating && (
+                    <CarForm
+                        initial={toCarCreate(viewingCar)}
+                        onSubmit={(input) => updateCar.mutate(input)}
+                    />
+                )}
+
+                {viewingCar && !isUpdating && (
+                    <>
+                        <dl className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
+                            <dt className="text-gray-800">ทะเบียน:</dt>
+                            <dd>{viewingCar.licensePlate}</dd>
+                            <dt className="text-gray-800">จังหวัด:</dt>
+                            <dd>{viewingCar.province}</dd>
+                            <dt className="text-gray-800">ยี่ห้อ / รุ่น:</dt>
+                            <dd>{viewingCar.brand} / {viewingCar.model}</dd>
+                            <dt className="text-gray-800">ปี:</dt>
+                            <dd>{viewingCar.year}</dd>
+                            <dt className="text-gray-800">สี:</dt>
+                            <dd>{viewingCar.color}</dd>
+                            <dt className="text-gray-800">หมายเหตุ:</dt>
+                            <dd>{viewingCar.remark}</dd>
+                        </dl>
+                        <div className="mt-6 flex justify-end gap-3">
+                            <button
+                                type="button"
+                                className="rounded-lg border border-red-300 px-4 py-2 text-red-600"
+                                onClick={handleDelete}
+                                disabled={deleteCar.isPending}
+                            >
+                                {deleteCar.isPending ? "Deleting..." : "Deleted"}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setIsUpdating(true)}
+                                className="rounded-lg bg-sky-600 px-4 py-2 text-white"
+                            >
+                                แก้ไข
+                            </button>
+                        </div>
+                    </>
+                )}
             </Modal>
         </div>
     )
+}
+
+function toCarCreate(car: Car): CarCreate {
+    return {
+        licensePlate: car.licensePlate,
+        province: car.province,
+        brand: car.brand,
+        model: car.model,
+        year: car.year,
+        color: car.color,
+        remark: car.remark
+    }
 }

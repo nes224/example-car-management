@@ -36,9 +36,11 @@ export class CarsService {
       qb.andWhere(
         new Brackets((b) => {
           b.where('car.licensePlate ILIKE :kw', { kw })
-            .orWhere('car.brand ILIKE :kw',{ kw })
+            .orWhere('car.brand ILIKE :kw', { kw })
             .orWhere('car.model ILIKE :kw', { kw })
-            .orWhere('car.province ILIKE :kw', { kw});
+            .orWhere('car.province ILIKE :kw', { kw })
+            .orWhere('car.color ILIKE :kw', { kw })
+            .orWhere('CAST(car.year AS TEXT) ILIKE :kw', { kw });
         }),
       );
     }
