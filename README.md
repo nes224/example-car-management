@@ -25,7 +25,9 @@ For db
 docker compose up -d db
 
 For be
+ 
 cd be
+ 
 กำหนดค่าใน .env เช่น
 
 - PORT=8005
@@ -38,8 +40,10 @@ cd be
 - npm install
 - npm start
 
-- For be
-- cd fe
+For be
+
+cd fe
+
 กำหนดค่าใน .env เช่น
 
 API_TARGET=http://localhost:8005
