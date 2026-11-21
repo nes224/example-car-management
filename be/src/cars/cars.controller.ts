@@ -22,10 +22,24 @@ import {
   badRequest,
   internalServerError,
 } from '../helpers/response/response.util';
+import { QueryFilter } from 'src/helpers/queryfilter/queryfilter.dto';
+import { KeywordQueryFilter } from 'src/helpers/queryfilter/keywordqueryfilter.dto';
+import { SearchCarDto } from './dto/search-car.dto';
 
 @Controller('cars')
 export class CarsController {
   constructor(private readonly carsService: CarsService) {}
+
+  @Post('search')
+  async search(
+    @Body() dto: SearchCarDto,
+    @Res() res: Response,
+  ): Promise<Response> {
+    let response: responseDto;
+    const result = await this.carsService.search(dto);
+    response = successRsp('Search car is success', result);
+    return res.status(HttpStatus.OK).send(response);
+  }
 
   @Post()
   async create(
