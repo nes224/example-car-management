@@ -21,3 +21,19 @@ export type CarCreate = {
   color: string;
   remark: string | null;
 };
+
+export type CarWhere = {
+  province?: string;
+  brand?: string;
+  model?: string;
+  color?: string;
+  year?: number;
+};
+
+export type SearchCarReq = {
+  where?: CarWhere;
+  order_by?: 'asc' | 'desc';
+  limit?: number;
+  offset?: number;
+  keyword?: string;
+};
