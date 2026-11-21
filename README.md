@@ -1,12 +1,12 @@
-Car Management
+# Car Management
 - Backend: NestJs + TypeOrm + PostgreSQL
 - Frontend: React + Vite + TypeScript + Tailwind CSS + React Router + TanStacn Query
 - Infra: Docker Compose (db + be + fe)
 
-Quick Start 
+# Quick Start 
 - docker compose up -d --build
 
-Service
+# Service
 FE: http://localhost:5173
 BE: http://localhost:8005/api
 API Docs (Swagger): http://localhost:8005/api/docs
