@@ -1,0 +1,12 @@
+FROM node:24-alpine
+
+WORKDIR /app
+
+COPY package*.json .npmrc ./
+RUN npm ci
+
+COPY . .
+
+
+EXPOSE 8005
+CMD ["npm", "run", "start:dev"]
