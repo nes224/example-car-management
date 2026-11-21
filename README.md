@@ -28,12 +28,12 @@ For be
 cd be
 กำหนดค่าใน .env เช่น
 
-PORT=8005
-DB_HOST=localhost
-DB_PORT=5434
-DB_USER=postgres
-DB_PASS=postgres
-DB_NAME=example_db
+- PORT=8005
+- DB_HOST=localhost
+- DB_PORT=5434
+- DB_USER=postgres
+- DB_PASS=postgres
+- DB_NAME=example_db
 
 npm install
 npm start
