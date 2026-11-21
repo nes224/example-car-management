@@ -23,7 +23,9 @@ import {
   internalServerError,
 } from '../helpers/response/response.util';
 import { SearchCarDto } from './dto/search-car.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('cars')
 @Controller('cars')
 export class CarsController {
   constructor(private readonly carsService: CarsService) {}

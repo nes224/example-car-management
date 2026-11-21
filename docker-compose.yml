@@ -37,6 +37,19 @@ services:
     depends_on:
       db:
         condition: service_healthy
+  
+  fe:
+    build: ./fe
+    container_name: example-car-fe
+    environment:
+      API_TARGET: http://be:8005
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./fe:/app
+      - /app/node_modules
+    depends_on:
+      - be
 
 volumes:
   pgdata:
