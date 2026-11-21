@@ -22,10 +22,24 @@ import {
   badRequest,
   internalServerError,
 } from '../helpers/response/response.util';
+import { SearchCarDto } from './dto/search-car.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('cars')
 @Controller('cars')
 export class CarsController {
   constructor(private readonly carsService: CarsService) {}
+
+  @Post('search')
+  async search(
+    @Body() dto: SearchCarDto,
+    @Res() res: Response,
+  ): Promise<Response> {
+    let response: responseDto;
+    const result = await this.carsService.search(dto);
+    response = successRsp('Search car is success', result);
+    return res.status(HttpStatus.OK).send(response);
+  }
 
   @Post()
   async create(
