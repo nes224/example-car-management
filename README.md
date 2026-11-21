@@ -35,11 +35,11 @@ cd be
 - DB_PASS=postgres
 - DB_NAME=example_db
 
-npm install
-npm start
+- npm install
+- npm start
 
-For be
-cd fe
+- For be
+- cd fe
 กำหนดค่าใน .env เช่น
 
 API_TARGET=http://localhost:8005
@@ -79,17 +79,17 @@ JSON BODY : {
 
 ## Database schema cars
 
-id uuid PK
-license_plate varchar unique
-province varchar unique
-brand varchar
-model varchar
-year smallint
-color varchar(50)
-remark text nullable: true
-created_at timestamptz
-updated_at timestamptz
-deleted_at timestamptz, nullable
+- id uuid PK
+- license_plate varchar unique
+- province varchar unique
+- brand varchar
+- model varchar
+- year smallint
+- color varchar(50)
+- remark text nullable: true
+- created_at timestamptz
+- updated_at timestamptz
+- deleted_at timestamptz, nullable
 
 # Project Structure
 
