@@ -47,15 +47,18 @@ API_TARGET=http://localhost:8005
 ืnpm install
 npm run dev
 
-API endpoint /api
+## API endpoint /api
 
-POST   | /api/cars        | เพิ่มข้อมูล
-GET    | /api/cars/:id    | ค้นหาข้อมูลด้วย id
-PATCH  | /api/cars/:id    | แก้ไขรถ (ใช้ method patch สามารถส่ง เฉพาะ field ได้ แต่ในฝั่งของ FE เราบังคับให้ส่งหมดก่อน)
-DELETE | /api/cars/:id    | ลบข้อมูล (เป็น soft delete โดยกำหนดผ่าน field deletedAt)
-POST   | /api/cars/search | ค้นหาข้อมูลทั้งหมด
+| Method | Endpoint | คำอธิบาย |
+| :--- | :--- | :--- |
+| `POST` | `/api/cars` | เพิ่มข้อมูลรถใหม่ |
+| `GET` | `/api/cars/:id` | ค้นหาข้อมูลรถด้วย `id` |
+| `PATCH` | `/api/cars/:id` | แก้ไขข้อมูลรถ (รองรับ partial update ที่ backend แต่ฝั่ง FE บังคับส่งครบทุก field) |
+| `DELETE` | `/api/cars/:id` | ลบข้อมูลรถแบบ Soft Delete (อัปเดต field `deletedAt`) |
+| `POST` | `/api/cars/search` | ค้นหาและดึงรายการข้อมูลรถทั้งหมด (รองรับ filter / pagination ตามเงื่อนไข) |
 
-รูปแบบ Response จะเป็น 
+## รูปแบบ Response จะเป็น 
+
 {
     "status": http.Status,
     "message: ""
@@ -74,7 +77,7 @@ JSON BODY : {
     "offset": 0​
 }
 
-Database schema cars
+## Database schema cars
 
 id uuid PK
 license_plate varchar unique
@@ -88,7 +91,8 @@ created_at timestamptz
 updated_at timestamptz
 deleted_at timestamptz, nullable
 
-Project Structure
+# Project Structure
+
 - docker-compose.yml
 - be
     - src/
